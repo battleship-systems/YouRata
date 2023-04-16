@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "Proto/MilestoneActionIntelligence.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "YouRata.Common.Proto";
+
+package conflict_monitor_message;
+
+service MilestoneActionIntelligenceService
+{
+    rpc UpdateInitialSetupActionIntelligence (MilestoneActionIntelligence.InitialSetupActionIntelligence) returns (google.protobuf.Empty);
+    rpc KeepaliveInitialSetup (google.protobuf.Empty) returns (google.protobuf.Empty);
+    rpc UpdateYouTubeSyncActionIntelligence (MilestoneActionIntelligence.YouTubeSyncActionIntelligence) returns (google.protobuf.Empty);
+    rpc KeepaliveYouTubeSync (google.protobuf.Empty) returns (google.protobuf.Empty);
+    rpc UpdateActionReportActionIntelligence (MilestoneActionIntelligence.ActionReportActionIntelligence) returns (google.protobuf.Empty);
+    rpc KeepaliveActionReport (google.protobuf.Empty) returns (google.protobuf.Empty);
+}

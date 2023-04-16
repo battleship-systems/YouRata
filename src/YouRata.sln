@@ -1,0 +1,53 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C14DB0A0-EB07-46F5-96FB-80DB50EC542E}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YouRata.Common", "YouRata.Common\YouRata.Common.csproj", "{8CD412CA-95F9-4476-A781-08098A1BE25E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YouRata.ConflictMonitor", "YouRata.ConflictMonitor\YouRata.ConflictMonitor.csproj", "{6BA65881-CC70-4113-B0A6-4CB6BC345C79}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YouRata.InitialSetup", "YouRata.InitialSetup\YouRata.InitialSetup.csproj", "{55A8DC68-9D40-40FD-BAAC-EF1848D728D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YouRata.YouTubeSync", "YouRata.YouTubeSync\YouRata.YouTubeSync.csproj", "{A29BB0A6-945B-4186-8417-D0A9CBD1F127}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YouRata.ActionReport", "YouRata.ActionReport\YouRata.ActionReport.csproj", "{F9CFB56C-E77B-4DC7-B1C2-4691FAEFD4A7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8CD412CA-95F9-4476-A781-08098A1BE25E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CD412CA-95F9-4476-A781-08098A1BE25E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CD412CA-95F9-4476-A781-08098A1BE25E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CD412CA-95F9-4476-A781-08098A1BE25E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BA65881-CC70-4113-B0A6-4CB6BC345C79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BA65881-CC70-4113-B0A6-4CB6BC345C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BA65881-CC70-4113-B0A6-4CB6BC345C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BA65881-CC70-4113-B0A6-4CB6BC345C79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55A8DC68-9D40-40FD-BAAC-EF1848D728D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55A8DC68-9D40-40FD-BAAC-EF1848D728D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55A8DC68-9D40-40FD-BAAC-EF1848D728D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55A8DC68-9D40-40FD-BAAC-EF1848D728D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A29BB0A6-945B-4186-8417-D0A9CBD1F127}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A29BB0A6-945B-4186-8417-D0A9CBD1F127}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A29BB0A6-945B-4186-8417-D0A9CBD1F127}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A29BB0A6-945B-4186-8417-D0A9CBD1F127}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9CFB56C-E77B-4DC7-B1C2-4691FAEFD4A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9CFB56C-E77B-4DC7-B1C2-4691FAEFD4A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9CFB56C-E77B-4DC7-B1C2-4691FAEFD4A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9CFB56C-E77B-4DC7-B1C2-4691FAEFD4A7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2FA93A2D-86D7-4017-94F4-0304A383BB7A}
+	EndGlobalSection
+EndGlobal

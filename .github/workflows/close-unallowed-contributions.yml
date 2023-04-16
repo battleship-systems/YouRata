@@ -1,0 +1,74 @@
+# Description: If anyone changes some source code files in the repo, this will redirect
+# them to the YouRata template repository and close the PR.
+
+name: Check unallowed file changes
+
+on:
+  pull_request_target:
+    paths:
+      - '.github/workflows/**'
+      - 'src/**'
+
+permissions:
+  pull-requests: write
+
+jobs:
+  triage:
+    if: >-
+      ${{
+        github.repository != 'battleship-systems/YouRata' &&
+        github.event.pull_request.user.login != 'battleship-systems' &&
+        github.event.pull_request.user.login != 'github-actions[bot]'
+      }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get files changed
+        uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50
+        id: filter
+        with:
+          # Base branch used to get changed files
+          base: 'main'
+
+          # Enables setting an output in the format in `${FILTER_NAME}_files
+          # with the names of the matching files formatted as JSON array
+          list-files: json
+
+          # Returns list of changed files matching each filter
+          filters: |
+            openapi:
+              - 'src/rest/data/**'
+            notAllowed:
+              - '.github/workflows/**'
+              - 'src/**'
+
+      - name: "Comment about changes we can't accept"
+        if: ${{ steps.filter.outputs.notAllowed }}
+        uses: actions/github-script@98814c53be79b1d30f795b907e553d8679345975
+        with:
+          script: |
+            const badFilesArr = [
+              '.github/workflows/**',
+              'src/**',
+            ]
+
+            const badFiles = badFilesArr.join('\n')
+
+            let reviewMessage = `👋 Hey there landlubber. It looks like you've modified some files that are not errata files. The complete list of files we can't accept are:\n${badFiles}\n\nIf you want to contribute YouRata source code use the [YouRata template repository](https://github.com/battleship-systems/YouRata). :octocat:`
+            let workflowFailMessage = "It looks like you've modified some files that we can't accept as contributions."
+
+            try {
+               createdComment = await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.number,
+                body: reviewMessage,
+              })
+            } catch(err) {
+              console.log("Error creating comment.", err)
+            }
+      - name: Close pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr close "$PR_URL"

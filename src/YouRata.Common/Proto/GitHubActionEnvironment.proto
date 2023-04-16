@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+option csharp_namespace = "YouRata.Common.Proto";
+
+package conflict_monitor_message;
+
+message GitHubActionEnvironment
+{
+    string Env_GitHub_Action = 1;
+    string Env_GitHub_Action_Path = 2;
+    string Env_GitHub_Action_Repository = 3;
+    bool Env_GitHub_Actions = 4;
+    string Env_GitHub_Actor = 5;
+    string Env_GitHub_Actor_Id = 6;
+    string Env_GitHub_Api_Url = 7;
+    string Env_GitHub_Base_Ref = 8;
+    string Env_GitHub_Env = 9;
+    string Env_GitHub_Event_Name = 10;
+    string Env_GitHub_Event_Path = 11;
+    string Env_GitHub_Graphql_Url = 12;
+    string Env_GitHub_Head_Ref = 13;
+    string Env_GitHub_Job = 14;
+    string Env_GitHub_Path = 15;
+    string Env_GitHub_Ref = 16;
+    string Env_GitHub_Ref_Name = 17;
+    string Env_GitHub_Ref_Protected = 18;
+    string Env_GitHub_Ref_Type = 19;
+    string Env_GitHub_Repository = 20;
+    int64 Env_GitHub_Repository_Id = 21;
+    string Env_GitHub_Repository_Owner = 22;
+    int64 Env_GitHub_Repository_Owner_Id = 23;
+    int32 Env_GitHub_Retention_Days = 24;
+    int32 Env_GitHub_Run_Attempt = 25;
+    int64 Env_GitHub_Run_Id = 26;
+    int32 Env_GitHub_Run_Number = 27;
+    string Env_GitHub_Server_Url = 28;
+    string Env_GitHub_Sha = 29;
+    string Env_GitHub_Step_Summary = 30;
+    string Env_GitHub_Workflow = 31;
+    string Env_GitHub_Workflow_Ref = 32;
+    string Env_GitHub_Workflow_Sha = 33;
+    string Env_GitHub_Workspace = 34;
+    string GitHub_Token = 35;
+    string Api_Token = 36;
+    int32 Rate_Limit_Core_Limit = 37;
+    int32 Rate_Limit_Core_Remaining = 38;
+    int64 Rate_Limit_Core_Reset = 39;
+}

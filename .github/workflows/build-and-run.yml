@@ -1,0 +1,85 @@
+# Syntax: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+# .NET CLI: https://docs.microsoft.com/dotnet/core/tools/
+# Description: The purpose of this workflow is to compile and run YouRata so it can commit new errata files.
+
+name: Run YouRata
+
+on:
+  workflow_dispatch:
+
+  #          ┌───────────── minute (0 - 59)
+  #          │ ┌───────────── hour (0 - 23)
+  #          │ │  ┌───────────── day of the month (1 - 31)
+  #          │ │  │  ┌───────────── month (1 - 12 or JAN-DEC)
+  #          │ │  │  │ ┌───────────── day of the week (0 - 6 or SUN-SAT)                                  
+  #          │ │  │  │ │
+  #          │ │  │  │ │
+  schedule:
+    - cron: '0 5 * * *' # Time is UTC
+
+jobs:
+  build-and-run:
+  
+    permissions:
+      actions: write
+      contents: write
+    
+    runs-on: ubuntu-latest
+    
+    env:
+      ACTION_TOKEN : ${{ secrets.GITHUB_TOKEN }}
+      API_TOKEN : ${{ secrets.API_TOKEN }}
+      TOKEN_RESPONSE : ${{ secrets.TOKEN_RESPONSE }}
+      PROJECT_CLIENT_SECRET : ${{ vars.PROJECT_CLIENT_SECRET }}
+      PROJECT_CLIENT_ID : ${{ vars.PROJECT_CLIENT_ID }}
+      PROJECT_API_KEY : ${{ secrets.PROJECT_API_KEY }}
+      CODE : ${{ secrets.CODE }}
+
+    steps:
+    # Optional: enable to log egress traffic
+    # - uses: step-security/harden-runner@03bee3930647ebbf994244c21ddbc0d4933aab4f # v2.3.0
+    #   with:
+    #     egress-policy: audit
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: main
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+    # Restore dependencies
+    - name: Restore dependencies
+      run: dotnet restore ./src/YouRata.sln
+    # Build the solution
+    - name: Build
+      run: dotnet build ./src/YouRata.sln --configuration Release --no-restore
+    # Start ConflictMonitor in the background
+    - name: Start ConflictMonitor
+      run: dotnet run --verbosity normal --no-build --configuration Release --project ./src/YouRata.ConflictMonitor/YouRata.ConflictMonitor.csproj ./src/YouRata.ConflictMonitor/bin/Release/net7.0/YouRata.ConflictMonitor.dll &
+    # Run InitialSetup if not already complete
+    - name: Run InitialSetup
+      if: ${{ env.INITIAL_SETUP_COMPLETE == 'false' }}
+      run: dotnet run --verbosity normal --no-build --configuration Release --project ./src/YouRata.InitialSetup/YouRata.InitialSetup.csproj ./src/YouRata.InitialSetup/bin/Release/net7.0/YouRata.InitialSetup.dll
+    # Overwrite directions README
+    - name: Copy directions readme
+      if: ${{ env.COPY_DIRECTIONS_README == 'true' }}
+      run: |
+          export LC_CTYPE=C
+          export LANG=C
+          
+          sed -i "s/%REPOSITORY_CONTENT_URL%/$REPOSITORY_CONTENT_URL/g" .github/readme/README.md
+          cp .github/readme/README.md ./README.md
+          
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git commit -m "Initial setup complete"
+          git push
+    # Run InitialSetup
+    - name: Run YouTubeSync
+      run: dotnet run --verbosity normal --no-build --configuration Release --project ./src/YouRata.YouTubeSync/YouRata.YouTubeSync.csproj ./src/YouRata.YouTubeSync/bin/Release/net7.0/YouRata.YouTubeSync.dll
+    # Run ActionReport
+    - name: Run ActionReport
+      if: success() || failure()
+      run: dotnet run --verbosity normal --no-build --configuration Release --project ./src/YouRata.ActionReport/YouRata.ActionReport.csproj ./src/YouRata.ActionReport/bin/Release/net7.0/YouRata.ActionReport.dll

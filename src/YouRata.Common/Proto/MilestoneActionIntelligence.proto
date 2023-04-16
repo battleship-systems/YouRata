@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option csharp_namespace = "YouRata.Common.Proto";
+
+package conflict_monitor_message;
+
+message MilestoneActionIntelligence
+{
+    enum MilestoneCondition
+    {
+        MILESTONE_PENDING = 0;
+        MILESTONE_BLOCKED = 1;
+        MILESTONE_RUNNING = 2;
+        MILESTONE_FAILED = 3;
+        MILESTONE_COMPLETED = 4;
+    }
+    message InitialSetupActionIntelligence
+    {
+        MilestoneCondition Condition = 1;
+        int32 Process_Id = 2;
+    }
+    message YouTubeSyncActionIntelligence
+    {
+        MilestoneCondition Condition = 1;
+        int32 Process_Id = 2;
+        int32 Videos_Processed = 3;
+        int32 Videos_Skipped = 4;
+        int32 Calculated_Queries_Per_Day_Remaining = 5;
+        int64 Last_Query_Time = 6;
+        int64 First_Video_Publish_Time = 7;
+        int64 Outstanding_Video_Publish_Time = 8;
+        bool Has_Outstanding_Videos = 9;
+    }
+    message ActionReportActionIntelligence
+    {
+        MilestoneCondition Condition = 1;
+        int32 Process_Id = 2;
+    }
+    reserved 1;
+    optional InitialSetupActionIntelligence Initial_Setup = 2;
+    optional YouTubeSyncActionIntelligence You_Tube_Sync = 3;
+    optional ActionReportActionIntelligence Action_Report = 4;
+}

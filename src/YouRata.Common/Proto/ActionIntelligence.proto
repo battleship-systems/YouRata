@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "Proto/MilestoneActionIntelligence.proto";
+import "Proto/GitHubActionEnvironment.proto";
+
+option csharp_namespace = "YouRata.Common.Proto";
+
+package conflict_monitor_message;
+
+message ActionIntelligence
+{
+    MilestoneActionIntelligence Milestone_Intelligence = 1;
+    GitHubActionEnvironment GitHub_Action_Environment = 2;
+    string Config_Json = 3;
+    string Previous_Action_Report = 4;
+}

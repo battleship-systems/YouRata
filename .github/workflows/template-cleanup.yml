@@ -1,0 +1,76 @@
+# Description: The purpose of this workflow is to Is to clean up the YouRata template repository
+# from the template specific files and workflows.
+
+name: Template Cleanup
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  template-cleanup:
+    name: Template Cleanup
+  
+    if: github.repository != 'battleship-systems/YouRata'
+  
+    permissions:
+      actions: write
+      contents: write
+    
+    runs-on: ubuntu-latest
+    
+    concurrency:
+      group: ${{ github.workflow }}
+    
+    env:
+      ACTION_TOKEN : ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+    # Restore dependencies
+    - name: Restore dependencies
+      run: dotnet restore ./src/YouRata.sln
+    # Build the solution
+    - name: Build
+      run: dotnet build ./src/YouRata.sln --configuration Release --no-restore
+    # Use ConflictMonitor to reate a blank config file
+    - name: Run ConflictMonitor
+      run: dotnet run --verbosity normal --no-build --configuration Release --project ./src/YouRata.ConflictMonitor/YouRata.ConflictMonitor.csproj newconfig ./src/YouRata.ConflictMonitor/bin/Release/net7.0/YouRata.ConflictMonitor.dll
+    # Cleanup the template
+    - name: Cleanup
+      run: |
+        export LC_CTYPE=C
+        export LANG=C
+        
+        # Prepare variables
+        NAME="${GITHUB_REPOSITORY##*/}"
+        
+        # Replace placeholders in the template-cleanup files
+        sed -i "s/%NAME%/$NAME/g" .github/template-cleanup/*
+        sed -i "s/%REPOSITORY%/${GITHUB_REPOSITORY/\//\\/}/g" .github/template-cleanup/*
+        
+        # Move content
+        shopt -s dotglob
+        cp -R .github/template-cleanup/* .
+        
+        # Cleanup
+        rm -rf \
+          .github/template-cleanup \
+          .github/workflows/template-cleanup.yml \
+          .github/workflows/build.yml \
+          CODE_OF_CONDUCT.md \
+          CHANGELOG.md \
+          LICENSE
+    # Commit modified files
+    - name: Commit & push files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add --all
+        git commit -m "Template cleanup"
+        git push

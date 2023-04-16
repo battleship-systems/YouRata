@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option csharp_namespace = "YouRata.Common.Proto";
+
+package conflict_monitor_message;
+
+message MilestoneLog
+{
+    string Message = 1;
+    string Milestone = 2;
+}
+message LogMessages
+{
+    repeated string Messages = 1;
+}
