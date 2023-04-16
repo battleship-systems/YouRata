@@ -1,6 +1,6 @@
 ![YouRata](./.github/readme/logo.png)
 
-![Status Badge](https://img.shields.io/badge/dynamic/json?color=informational&label=Status&cacheSeconds=300&query=%24.ActionReport.Status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcantest-nospam%2Freal%2Fmain%2Faction-report.json)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/a44f7dbf64fa4296a1364bb1d57e49d4)](https://app.codacy.com/gh/battleship-systems/YouRata/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 # Purpose
 
