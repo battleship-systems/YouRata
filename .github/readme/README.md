@@ -37,4 +37,4 @@ This repository was created from the official [YouRata](https://github.com/battl
 
 ## License
 
-The source code to YouRata is provided under the [MIT license](https://github.com/battleship-systems/YouRata/blob/master/LICENSE)
+The source code to YouRata is provided under the [MIT license](https://github.com/battleship-systems/YouRata/blob/main/LICENSE)
