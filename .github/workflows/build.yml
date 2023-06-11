@@ -21,7 +21,7 @@ jobs:
   build:
   
     permissions:
-      contents: read
+      contents: write
     
     runs-on: ubuntu-latest
 
@@ -40,3 +40,8 @@ jobs:
     # Build the solution
     - name: Build
       run: dotnet build ./src/YouRata.sln --no-restore
+    # Create fake commit every 60 days of repository inactivity
+    - name: Keepalive workflow
+      uses: gautamkrishnar/keepalive-workflow@1.1.0
+      with:
+        commit_message: 'Repository inactivity detected'
