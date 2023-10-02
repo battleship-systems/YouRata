@@ -40,8 +40,9 @@ jobs:
     # Build the solution
     - name: Build
       run: dotnet build ./src/YouRata.sln --no-restore
-    # Create fake commit every 60 days of repository inactivity
+    # Create fake commit every 40 days of repository inactivity
     - name: Keepalive workflow
       uses: gautamkrishnar/keepalive-workflow@1.1.0
       with:
         commit_message: 'Repository inactivity detected'
+        time_elapsed: 40
