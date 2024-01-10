@@ -31,7 +31,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
     # Restore dependencies
     - name: Restore dependencies
       run: dotnet restore ./src/YouRata.sln
@@ -40,7 +40,7 @@ jobs:
       run: dotnet build ./src/YouRata.sln --configuration Release --no-restore
     # Use ConflictMonitor to reate a blank config file
     - name: Run ConflictMonitor
-      run: dotnet run --verbosity normal --no-build --configuration Release --project ./src/YouRata.ConflictMonitor/YouRata.ConflictMonitor.csproj newconfig ./src/YouRata.ConflictMonitor/bin/Release/net7.0/YouRata.ConflictMonitor.dll
+      run: dotnet run --verbosity normal --no-build --configuration Release --project ./src/YouRata.ConflictMonitor/YouRata.ConflictMonitor.csproj newconfig ./src/YouRata.ConflictMonitor/bin/Release/net8.0/YouRata.ConflictMonitor.dll
     # Cleanup the template
     - name: Cleanup
       run: |
