@@ -240,6 +240,13 @@ internal static class YouTubeVideoHelper
                     continue;
                 }
 
+                // Skip videos with no duration
+                if (string.IsNullOrEmpty(videoDetails.ContentDetails.Duration))
+                {
+                    intelligence.VideosSkipped++;
+                    continue;
+                }
+
                 TimeSpan contentDuration = XmlConvert.ToTimeSpan(videoDetails.ContentDetails.Duration);
                 // Skip videos shorter than the minimum time
                 if (contentDuration.TotalSeconds < config.MinVideoSeconds)
