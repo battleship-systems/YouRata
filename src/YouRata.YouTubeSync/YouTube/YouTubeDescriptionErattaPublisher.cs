@@ -10,7 +10,7 @@ using YouRata.Common.YouTube;
 namespace YouRata.YouTubeSync.YouTube;
 
 /// <summary>
-/// Static methods for manipulating video descriptions
+/// Static methods for manipulating video descriptions to add errata links
 /// </summary>
 internal static class YouTubeDescriptionErattaPublisher
 {
@@ -21,7 +21,7 @@ internal static class YouTubeDescriptionErattaPublisher
         if ((errataNotice.Length + description.Length) > YouTubeConstants.MaxDescriptionLength && config.TruncateDescriptionOverflow)
         {
             // Old description is too long to add errata link text, truncate it
-            description = description.Substring(0, description.Length - errataNotice.Length);
+            description = description.Substring(0, Math.Max(0, description.Length - errataNotice.Length));
         }
 
         switch (config.ErattaLinkLocation)

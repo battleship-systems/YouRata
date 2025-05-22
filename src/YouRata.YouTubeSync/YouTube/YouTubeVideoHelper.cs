@@ -25,139 +25,6 @@ namespace YouRata.YouTubeSync.YouTube;
 internal static class YouTubeVideoHelper
 {
     /// <summary>
-    /// Get a list of videos published before the first outstanding video time
-    /// </summary>
-    /// <param name="config"></param>
-    /// <param name="excludeVideos"></param>
-    /// <param name="intelligence"></param>
-    /// <param name="service"></param>
-    /// <param name="client"></param>
-    /// <returns></returns>
-    public static List<Video> GetOutstandingChannelVideos(YouTubeConfiguration config, List<ResourceId> excludeVideos,
-        YouTubeSyncActionIntelligence intelligence, YouTubeService service, YouTubeSyncCommunicationClient client)
-    {
-        long firstOutstandingPublishTime = (intelligence.OutstandingVideoPublishTime - 1);
-        long? lastPublishTime;
-        List<Video> outstandingChannelVideos = GetChannelVideos(config, firstOutstandingPublishTime, null, out lastPublishTime,
-            excludeVideos, intelligence, service, client);
-        if (lastPublishTime.HasValue)
-        {
-            // Save the last publish time to the milestone intelligence
-            intelligence.OutstandingVideoPublishTime = lastPublishTime.Value;
-        }
-        else
-        {
-            // No outstanding videos exist
-            intelligence.OutstandingVideoPublishTime = 0;
-        }
-
-        return outstandingChannelVideos;
-    }
-
-    /// <summary>
-    /// Get a list of videos published after the first video time
-    /// </summary>
-    /// <param name="config"></param>
-    /// <param name="excludeVideos"></param>
-    /// <param name="intelligence"></param>
-    /// <param name="service"></param>
-    /// <param name="client"></param>
-    /// <returns></returns>
-    public static List<Video> GetRecentChannelVideos(YouTubeConfiguration config, List<ResourceId> excludeVideos,
-        YouTubeSyncActionIntelligence intelligence, YouTubeService service, YouTubeSyncCommunicationClient client)
-    {
-        long firstRecentPublishTime = intelligence.FirstVideoPublishTime;
-        long lastRecentPublishTime;
-        List<Video> recentChannelVideos = GetChannelVideos(config, null, firstRecentPublishTime, out long? lastPublishTime, excludeVideos,
-            intelligence, service, client);
-        if (lastPublishTime.HasValue)
-        {
-            // Save in case this is the first run
-            lastRecentPublishTime = lastPublishTime.Value;
-        }
-        else
-        {
-            // No outstanding videos exist
-            lastRecentPublishTime = 0;
-        }
-
-        // Determine if this is the first run
-        if (firstRecentPublishTime == 0 && recentChannelVideos.Count > 0)
-        {
-            // Find the first videos publish time
-            DateTime? firstPublishDateTime = recentChannelVideos.First().Snippet.PublishedAt;
-            if (firstPublishDateTime.HasValue)
-            {
-                DateTimeOffset publishTimeOffset = new DateTimeOffset(firstPublishDateTime.Value);
-                firstRecentPublishTime = publishTimeOffset.ToUnixTimeSeconds();
-                // The next run will pull videos after the last recent publish time
-                intelligence.OutstandingVideoPublishTime = lastRecentPublishTime;
-            }
-        }
-
-        // Save the first video publish time to the milestone intelligence
-        intelligence.FirstVideoPublishTime = firstRecentPublishTime;
-        return recentChannelVideos;
-    }
-
-    public static VideoDurationEnum GetVideoDurationFromConfig(YouTubeConfiguration config)
-    {
-        switch (config.VideoDurationFilter)
-        {
-            case "any":
-                // Do not filter video search results based on their duration
-                return VideoDurationEnum.Any;
-            case "long":
-                // Only include videos longer than 20 minutes
-                return VideoDurationEnum.Long__;
-            case "medium":
-                // Only include videos that are between four and 20 minutes long (inclusive)
-                return VideoDurationEnum.Medium;
-            case "short":
-                // Only include videos that are less than four minutes long
-                return VideoDurationEnum.Short__;
-        }
-
-        return VideoDurationEnum.Any;
-    }
-
-    /// <summary>
-    /// Update a video snippet description
-    /// </summary>
-    /// <param name="video"></param>
-    /// <param name="description"></param>
-    /// <param name="intelligence"></param>
-    /// <param name="service"></param>
-    /// <param name="client"></param>
-    /// <exception cref="MilestoneException"></exception>
-    public static void UpdateVideoDescription(Video video, string description, YouTubeSyncActionIntelligence intelligence,
-        YouTubeService service, YouTubeSyncCommunicationClient client)
-    {
-        if (!YouTubeQuotaHelper.HasRemainingCalls(intelligence)) throw new MilestoneException("YouTube API rate limit exceeded");
-        if (video.Snippet == null) return;
-        foreach (PropertyInfo videoProperty in video.GetType().GetProperties())
-        {
-            if (videoProperty.CanWrite && videoProperty.PropertyType.IsClass)
-            {
-                // Remove every part from the video instance except id and snippet
-                if (!videoProperty.Name.Equals("Id") && !videoProperty.Name.Equals("Snippet"))
-                {
-                    videoProperty.SetValue(video, null);
-                }
-            }
-        }
-
-        video.Snippet.Description = description;
-        VideosResource.UpdateRequest videoUpdateRequest =
-            new VideosResource.UpdateRequest(service, video, new[] { YouTubeConstants.RequestSnippetPart });
-        // Construct a VideoUpdate action
-        Action videoUpdate = (() => { videoUpdateRequest.Execute(); });
-        YouTubeRetryHelper.RetryCommand(intelligence, YouTubeConstants.VideosResourceUpdateQuotaCost, videoUpdate, TimeSpan.FromSeconds(5),
-            TimeSpan.FromSeconds(10), client.LogMessage, HttpStatusCode.Forbidden, out bool forbidden);
-        if (forbidden) throw new MilestoneException("YouTube API update video forbidden");
-    }
-
-    /// <summary>
     /// Get all videos for a channel published between two times
     /// </summary>
     /// <param name="config"></param>
@@ -170,7 +37,7 @@ internal static class YouTubeVideoHelper
     /// <param name="client"></param>
     /// <returns></returns>
     /// <exception cref="MilestoneException"></exception>
-    internal static List<Video> GetChannelVideos(YouTubeConfiguration config, long? publishedBefore, long? publishedAfter,
+    public static List<Video> GetChannelVideos(YouTubeConfiguration config, long? publishedBefore, long? publishedAfter,
         out long? lastPublishTime, List<ResourceId> excludeVideos, YouTubeSyncActionIntelligence intelligence, YouTubeService service,
         YouTubeSyncCommunicationClient client)
     {
@@ -266,5 +133,170 @@ internal static class YouTubeVideoHelper
         }
 
         return channelVideos;
+    }
+
+    /// <summary>
+    /// Get a list of videos published before the first outstanding video time
+    /// </summary>
+    /// <param name="config"></param>
+    /// <param name="excludeVideos"></param>
+    /// <param name="intelligence"></param>
+    /// <param name="service"></param>
+    /// <param name="client"></param>
+    /// <returns></returns>
+    public static List<Video> GetOutstandingChannelVideos(YouTubeConfiguration config, List<ResourceId> excludeVideos,
+        YouTubeSyncActionIntelligence intelligence, YouTubeService service, YouTubeSyncCommunicationClient client)
+    {
+        long firstOutstandingPublishTime = (intelligence.OutstandingVideoPublishTime - 1);
+        long? lastPublishTime;
+        List<Video> outstandingChannelVideos = GetChannelVideos(config, firstOutstandingPublishTime, null, out lastPublishTime,
+            excludeVideos, intelligence, service, client);
+        if (lastPublishTime.HasValue)
+        {
+            // Save the last publish time to the milestone intelligence
+            intelligence.OutstandingVideoPublishTime = lastPublishTime.Value;
+        }
+        else
+        {
+            // No outstanding videos exist
+            intelligence.OutstandingVideoPublishTime = 0;
+        }
+
+        return outstandingChannelVideos;
+    }
+
+    /// <summary>
+    /// Get a list of videos published after the first video time
+    /// </summary>
+    /// <param name="config"></param>
+    /// <param name="excludeVideos"></param>
+    /// <param name="intelligence"></param>
+    /// <param name="service"></param>
+    /// <param name="client"></param>
+    /// <returns></returns>
+    public static List<Video> GetRecentChannelVideos(YouTubeConfiguration config, List<ResourceId> excludeVideos,
+        YouTubeSyncActionIntelligence intelligence, YouTubeService service, YouTubeSyncCommunicationClient client)
+    {
+        long firstRecentPublishTime = intelligence.FirstVideoPublishTime;
+        long lastRecentPublishTime;
+        List<Video> recentChannelVideos = GetChannelVideos(config, null, firstRecentPublishTime, out long? lastPublishTime, excludeVideos,
+            intelligence, service, client);
+        if (lastPublishTime.HasValue)
+        {
+            // Save in case this is the first run
+            lastRecentPublishTime = lastPublishTime.Value;
+        }
+        else
+        {
+            // No outstanding videos exist
+            lastRecentPublishTime = 0;
+        }
+
+        // Determine if this is the first run
+        if (firstRecentPublishTime == 0 && recentChannelVideos.Count > 0)
+        {
+            // Find the first videos publish time
+            DateTime? firstPublishDateTime = recentChannelVideos.First().Snippet.PublishedAt;
+            if (firstPublishDateTime.HasValue)
+            {
+                DateTimeOffset publishTimeOffset = new DateTimeOffset(firstPublishDateTime.Value);
+                firstRecentPublishTime = publishTimeOffset.ToUnixTimeSeconds();
+                // The next run will pull videos after the last recent publish time
+                intelligence.OutstandingVideoPublishTime = lastRecentPublishTime;
+            }
+        }
+
+        // Save the first video publish time to the milestone intelligence
+        intelligence.FirstVideoPublishTime = firstRecentPublishTime;
+        return recentChannelVideos;
+    }
+
+
+    /// <summary>
+    /// Get a single video
+    /// </summary>
+    /// <param name="videoId"></param>
+    /// <param name="intelligence"></param>
+    /// <param name="service"></param>
+    /// <param name="client"></param>
+    /// <returns></returns>
+    /// <exception cref="MilestoneException"></exception>
+    public static Video? GetVideo(string videoId, YouTubeSyncActionIntelligence intelligence, YouTubeService service, YouTubeSyncCommunicationClient client)
+    {
+        if (!YouTubeQuotaHelper.HasRemainingCalls(intelligence)) throw new MilestoneException("YouTube API rate limit exceeded");
+        if (string.IsNullOrEmpty(videoId)) return null;
+
+        // Build the list request
+        VideosResource.ListRequest videoRequest = new VideosResource.ListRequest(service, new[] { YouTubeConstants.RequestSnippetPart });
+        videoRequest.Id = videoId;
+        videoRequest.MaxResults = 1;
+
+        // Construct a GetVideoResponse function
+        Func<VideoListResponse> getVideoResponse = (() => { return videoRequest.Execute(); });
+        VideoListResponse? videoResponse = YouTubeRetryHelper.RetryCommand(intelligence, YouTubeConstants.VideoListQuotaCost,
+            getVideoResponse, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), client.LogMessage);
+        client.Keepalive();
+        if (videoResponse == null) throw new MilestoneException($"Could not get YouTube video {videoRequest.Id}");
+        // Only one video is returned
+        Video videoDetails = videoResponse.Items.First();
+
+        return videoDetails;
+    }
+
+    public static VideoDurationEnum GetVideoDurationFromConfig(YouTubeConfiguration config)
+    {
+        switch (config.VideoDurationFilter)
+        {
+            case "any":
+                // Do not filter video search results based on their duration
+                return VideoDurationEnum.Any;
+            case "long":
+                // Only include videos longer than 20 minutes
+                return VideoDurationEnum.Long__;
+            case "medium":
+                // Only include videos that are between four and 20 minutes long (inclusive)
+                return VideoDurationEnum.Medium;
+            case "short":
+                // Only include videos that are less than four minutes long
+                return VideoDurationEnum.Short__;
+        }
+
+        return VideoDurationEnum.Any;
+    }
+
+    /// <summary>
+    /// Update a video snippet description
+    /// </summary>
+    /// <param name="video"></param>
+    /// <param name="description"></param>
+    /// <param name="intelligence"></param>
+    /// <param name="service"></param>
+    /// <param name="client"></param>
+    /// <exception cref="MilestoneException"></exception>
+    public static void UpdateVideoDescription(Video video, string description, YouTubeSyncActionIntelligence intelligence,
+        YouTubeService service, YouTubeSyncCommunicationClient client)
+    {
+        if (!YouTubeQuotaHelper.HasRemainingCalls(intelligence)) throw new MilestoneException("YouTube API rate limit exceeded");
+        if (video.Snippet == null) return;
+        foreach (PropertyInfo videoProperty in video.GetType().GetProperties())
+        {
+            if (videoProperty.CanWrite && videoProperty.PropertyType.IsClass)
+            {
+                // Remove every part from the video instance except id and snippet
+                if (!videoProperty.Name.Equals("Id") && !videoProperty.Name.Equals("Snippet"))
+                {
+                    videoProperty.SetValue(video, null);
+                }
+            }
+        }
+
+        video.Snippet.Description = description;
+        VideosResource.UpdateRequest videoUpdateRequest =
+            new VideosResource.UpdateRequest(service, video, new[] { YouTubeConstants.RequestSnippetPart });
+        // Construct a VideoUpdate action
+        Action videoUpdate = (() => { videoUpdateRequest.Execute(); });
+        YouTubeRetryHelper.RetryCommand(intelligence, YouTubeConstants.VideosResourceUpdateQuotaCost, videoUpdate, TimeSpan.FromSeconds(5),
+            TimeSpan.FromSeconds(10), client.LogMessage, HttpStatusCode.Forbidden, out bool forbidden);
+        if (forbidden) throw new MilestoneException("YouTube API update video forbidden");
     }
 }

@@ -23,10 +23,6 @@ public class ActionCutOutConfiguration : BaseValidatableConfiguration
     [Required]
     public bool DisableInitialSetupMilestone { get; set; }
 
-    // Disable any API call not implemented in Octokit
-    [Required]
-    public bool DisableUnsupportedGitHubAPI { get; set; }
-
     // Disable the entire YouTubeSync milestone
     [Required]
     public bool DisableYouTubeSyncMilestone { get; set; }
@@ -34,4 +30,8 @@ public class ActionCutOutConfiguration : BaseValidatableConfiguration
     // Disable updating the YouTube video description
     [Required]
     public bool DisableYouTubeVideoUpdate { get; set; }
+
+    // Disable updating the YouTube video corrections
+    [Required]
+    public bool DisableYouTubeCorrections { get; set; }
 }

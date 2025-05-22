@@ -65,29 +65,17 @@ using (InitialSetupCommunicationClient client = new InitialSetupCommunicationCli
         {
             // YouTube Data API credentials are missing
             Console.WriteLine("Entering actions variables section");
-            if (!config.ActionCutOuts.DisableUnsupportedGitHubAPI)
-            {
-                // Create empty action variables for the credentials
-                UnsupportedGitHubAPIClient.CreateVariable(actionEnvironment, YouRataConstants.ProjectClientIdVariable, "empty",
-                    client.LogMessage);
-                client.Keepalive();
-                UnsupportedGitHubAPIClient.CreateVariable(actionEnvironment, YouRataConstants.ProjectClientSecretsVariable, "empty",
-                    client.LogMessage);
-                client.Keepalive();
-                Announce("Fill repository variables and run action again");
-                // Add URL for action variables
-                GitHubWorkflowHelper.WriteStepSummary(
-                    $"{actionEnvironment.EnvGitHubServerUrl}/{actionEnvironment.EnvGitHubRepository}/settings/variables/actions\n");
-            }
-            else
-            {
-                // Tell the user to create empty variables for the credentials
-                Announce($"Create an action variable {YouRataConstants.ProjectClientIdVariable} to store Google API client ID");
-                Announce($"Create an action variable {YouRataConstants.ProjectClientSecretsVariable} to store Google API client secrets");
-                // Add URL for action variables
-                GitHubWorkflowHelper.WriteStepSummary(
-                    $"{actionEnvironment.EnvGitHubServerUrl}/{actionEnvironment.EnvGitHubRepository}/settings/variables/actions\n");
-            }
+            // Create empty action variables for the credentials
+            GitHubAPIClient.CreateVariable(actionEnvironment, YouRataConstants.ProjectClientIdVariable, "empty",
+                client.LogMessage);
+            client.Keepalive();
+            GitHubAPIClient.CreateVariable(actionEnvironment, YouRataConstants.ProjectClientSecretsVariable, "empty",
+                client.LogMessage);
+            client.Keepalive();
+            Announce("Fill repository variables and run action again");
+            // Add URL for action variables
+            GitHubWorkflowHelper.WriteStepSummary(
+                $"{actionEnvironment.EnvGitHubServerUrl}/{actionEnvironment.EnvGitHubRepository}/settings/variables/actions\n");
 
             canContinue = false;
         }

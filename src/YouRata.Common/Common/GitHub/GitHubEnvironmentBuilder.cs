@@ -1,4 +1,4 @@
-// Copyright (c) 2023 batteship-systems.
+// Copyright (c) 2023 battleship-systems.
 // Licensed under the MIT license.
 
 using System;

@@ -21,6 +21,7 @@ This repository template depends on the following packages:
 
 ## Features
 
+- :thumbsup: Automatically creates corrections to display on the YouTube video when errata is submitted
 - :thumbsup: Automatically creates an errata link in the YouTube video description
 - :thumbsup: Keeps track of API rate limits and regulates synchronization over time
 - :thumbsup: Customizable errata bulletin files

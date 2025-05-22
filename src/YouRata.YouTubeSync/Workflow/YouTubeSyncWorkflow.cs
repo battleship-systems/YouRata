@@ -17,6 +17,8 @@ internal class YouTubeSyncWorkflow
     private readonly string _clientId;
     // OAuth 2.0 client secret
     private readonly string _clientSecret;
+    // Last commit SHA for the push
+    private readonly string _eventBefore;
     // Saved token response
     private readonly string _tokenResponse;
     // Working directory on the runner
@@ -32,6 +34,8 @@ internal class YouTubeSyncWorkflow
             .GetEnvironmentVariable(YouRataConstants.ProjectClientIdVariable);
         _clientSecret = Environment
             .GetEnvironmentVariable(YouRataConstants.ProjectClientSecretsVariable);
+        _eventBefore = Environment
+            .GetEnvironmentVariable(YouRataConstants.GitHubEventBeforeVariable);
         _tokenResponse = Environment
             .GetEnvironmentVariable(YouRataConstants.StoredTokenResponseVariable);
         _workspace = Environment
@@ -39,6 +43,8 @@ internal class YouTubeSyncWorkflow
     }
 #pragma warning restore CS8601
 #pragma warning restore CS8618
+
+    public string EventBefore => _eventBefore;
 
     public string ProjectApiKey => _apiKey;
 

@@ -11,6 +11,8 @@ namespace YouRata.Common.YouTube;
 /// </summary>
 public static class YouTubeConstants
 {
+    // YouTube video correction starting string
+    public const string CorrectionBegin = "Corrections:";
     // Maximim length for a video description
     public const int MaxDescriptionLength = 5000;
     // YouTube Data API quota cost for PlaylistItems: list

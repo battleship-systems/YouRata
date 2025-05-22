@@ -17,6 +17,12 @@ on:
   schedule:
     - cron: '0 5 * * *' # Time is UTC
 
+  push:
+    branches:
+      - main
+    paths:
+      - 'errata/**'
+
 jobs:
   build-and-run:
   
@@ -34,6 +40,7 @@ jobs:
       PROJECT_CLIENT_ID : ${{ vars.PROJECT_CLIENT_ID }}
       PROJECT_API_KEY : ${{ secrets.PROJECT_API_KEY }}
       CODE : ${{ secrets.CODE }}
+      GITHUB_EVENT_BEFORE : ${{ github.event.before }}
 
     steps:
     # Optional: enable to log egress traffic
@@ -76,7 +83,7 @@ jobs:
           git add README.md
           git commit -m "Initial setup complete"
           git push
-    # Run InitialSetup
+    # Run YouTubeSync
     - name: Run YouTubeSync
       run: dotnet run --verbosity normal --no-build --configuration Release --project ./src/YouRata.YouTubeSync/YouRata.YouTubeSync.csproj ./src/YouRata.YouTubeSync/bin/Release/net8.0/YouRata.YouTubeSync.dll
     # Run ActionReport

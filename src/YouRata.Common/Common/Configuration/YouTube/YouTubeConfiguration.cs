@@ -17,6 +17,11 @@ public class YouTubeConfiguration : BaseValidatableConfiguration
     [RegularExpression(@"^UC[-_0-9A-Za-z]{21}[AQgw]$", ErrorMessage = "Invalid YouTubeConfiguration.ChannelId")]
     public string ChannelId { get; set; }
 
+    // Text to place below the corrections
+    [Required]
+    [DefaultValue("---")]
+    public string CorrectionsCloser { get; set; }
+
     // Where to place the errata link in the video description
     [Required]
     [DefaultValue("bottom")]

@@ -23,6 +23,8 @@ public static class YouRataConstants
     public const string CopyDirectionsReadmeVariable = "COPY_DIRECTIONS_README";
     // Directory for errata markdowns
     public const string ErrataRootDirectory = "errata/";
+    // Last commit SHA for the push variable name
+    public const string GitHubEventBeforeVariable = "GITHUB_EVENT_BEFORE";
     // Working directory on the runner variable name
     public const string GitHubWorkspaceVariable = "GITHUB_WORKSPACE";
     // gRPC compression level
